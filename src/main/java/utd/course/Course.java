@@ -1,7 +1,7 @@
 package utd.course;
 import rate.my.professor.*;
 
-public class Course {
+public class Course implements Comparable{
 	private String status;
 	private String location;
 	private String number;
@@ -22,9 +22,22 @@ public class Course {
 		instructor = i;
 		term = te;
 	}
-	
+	public Professor getProf()
+	{
+		return instructor;
+	}
 	public String toString()
 	{
-		return term  + "\n" + status + "\n" + number  + "\n" + name  + "\n" + instructor  + "\n" + day  + "\n" + time  + "\n" + location;
+		return number + "\t" + status + "\t" + term + "\n" + name  + "\n" + instructor  + "\n" + day  + "\t" + time  + "\t" + location;
 	}
+
+	@Override
+	public int compareTo(Object o) {
+		Course a = (Course)o;
+		int dif = (int)(instructor.getScore() * 10 - a.getProf().getScore() * 10);
+		if(dif == 0)
+			return -1;
+		return dif;
+	}
+	
 }

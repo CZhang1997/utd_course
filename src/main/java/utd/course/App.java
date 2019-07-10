@@ -13,12 +13,6 @@ public class App
 {
     public static void main( String[] args ) throws ClientProtocolException, IOException
     {
-        System.out.println( "Hello World!" );
-        CourseManager instance = CourseManager.getInstance();
-		ArrayList<Course> list = instance.searchCourses("cs4337", "19f");
-		for(Course c: list)
-		{
-			System.out.println(c);
-		}
+        UTD_Course_Book book = new UTD_Course_Book();
     }
 }

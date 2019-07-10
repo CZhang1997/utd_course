@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.TreeSet;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -85,28 +88,57 @@ public class CourseManager {
 		else
 			instr = pros.get("-Staff-");
 		location = getBet(line, "ion\">", "</div>");
+//		System.out.println(line);
+//		System.out.println("location is " + location);
 		day = getBet(line, "day\">", "</span>");
 		String temp = line.substring(line.indexOf("</span>") + 5);
 		time = getBet(temp,"ime\">", "</span>");
 		return new Course(status, location, number, name, day, time, instr, t);
 		
 	}
-	public ArrayList<Course> searchCourses(String course, String term) throws IOException
+	public TreeSet<Course> searchCourses(String course, String term) throws IOException
 	{
 		String url = "https://coursebook.utdallas.edu/" + course + "/term_" + term +"?";
-		LinkedList<String> s = request(url);
-		ArrayList<Course> c = new ArrayList<>();
+		LinkedList<String> s = request(url, term);
+		TreeSet<Course> c = new TreeSet<>();
 		for(String i: s)
 		{
 			c.add(parse(i));
 		}
+		
 		return c;
 	}
-	public LinkedList<String> request(String url) throws IOException
+	public String getAnnouncement() throws ClientProtocolException, IOException
+	{
+		String url = "https://superrainz.github.io/";
+		HttpGet request = new HttpGet(url);
+		HttpResponse response = client.execute(request);
+		entity = response.getEntity();
+		BufferedReader re = new BufferedReader(new InputStreamReader(entity.getContent()));
+		if(re != null)
+		{
+			String line = "";
+			while(line != null)
+			{
+				int index = line.indexOf("Announcement:");
+				if(index != -1)
+				{
+					index += "Announcement:".length();
+					return line.substring(index, line.indexOf("end"));
+				}
+				line = re.readLine();
+			}
+		}
+//		else
+//		{
+//			System.out.println("buffered reader is null");
+//		}
+		return "";
+	}
+	public LinkedList<String> request(String url, String term) throws IOException
 	{
 		HttpGet request = new HttpGet(url);
 		HttpResponse response = client.execute(request);
-		//int code = response.getStatusLine().getStatusCode();
 		if(entity != null)
 			try {
 				EntityUtils.consume(entity);
@@ -130,7 +162,8 @@ public class CourseManager {
 				}
 				else
 				{
-					data.add(cur.substring(cur.indexOf("19F")));
+					cur += line;
+					data.add(cur.substring(cur.indexOf(term)));
 					cur = "";
 				}
 				tbody = line.indexOf("tbody") == -1;
@@ -154,6 +187,15 @@ public class CourseManager {
 	}
 	public static void main(String[] args) throws ClientProtocolException, IOException
 	{
-		
+		CourseManager m = new CourseManager();
+		TreeSet<Course> courses = m.searchCourses("ecs3390", "19u");
+			String text = "Results:\n";
+			text+="///////////////////////////////////////////////////////////////////////////////////////////////////////////////\n";
+			for(Course c: courses)
+			{
+				text+= c;
+				text+= "\n";
+			}
+			System.out.println(text);
 	}
 }

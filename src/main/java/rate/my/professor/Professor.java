@@ -10,6 +10,14 @@ public class Professor {
 		overall = o;
 		difficulty = d;
 	}
+	public String getName()
+	{
+		return name;
+	}
+	public double getScore()
+	{
+		return overall;
+	}
 	public String toString()
 	{
 		return "Professor Name = "+ name + ", Overall Grade = " + overall + ", Difficulty = " + difficulty;
