@@ -15,7 +15,7 @@ public class App
     {
         System.out.println( "Hello World!" );
         CourseManager instance = CourseManager.getInstance();
-		ArrayList<Course> list = instance.searchCourses("cs4375", "19f");
+		ArrayList<Course> list = instance.searchCourses("cs4337", "19f");
 		for(Course c: list)
 		{
 			System.out.println(c);

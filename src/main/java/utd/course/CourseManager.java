@@ -1,16 +1,19 @@
 package utd.course;
-
+import rate.my.professor.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 public class CourseManager {
 	
@@ -18,7 +21,9 @@ public class CourseManager {
 	
 	private HttpClient client;
 	private ArrayList<Course> courses;
-	
+	private HashMap<String, Professor> pros;
+	private Professor_Rating rate;
+	private HttpEntity entity;
 	public synchronized static CourseManager getInstance()
 	{
 		if (instance == null)
@@ -29,6 +34,9 @@ public class CourseManager {
 	{
 		client = HttpClientBuilder.create().build();
 		courses = new ArrayList<>();
+		rate = new Professor_Rating(client);
+		pros = new HashMap<>();
+		pros.put("-Staff-", new Professor("-Staff-",0,0));
 	}
 	
 	public void addCourse(Course c)
@@ -45,7 +53,7 @@ public class CourseManager {
 		String name;
 		String day;
 		String time;
-		String instr;
+		Professor instr;
 		String t = line.substring(0, 3);
 		if(line.indexOf("Closed") != -1)
 			status = "Closed";
@@ -57,9 +65,25 @@ public class CourseManager {
 		//System.out.println(line);
 		name = getBet("<td>" + line, "<td>", "</td>");
 		if(line.indexOf("-Staff-") == -1)
-			instr = getBet(line, "title=\"", "\">");
+		{
+			String na = getBet(line, "title=\"", "\">").trim();
+			try {
+				instr = pros.get(na);
+				if(instr == null)
+				{
+					instr = rate.get(na);
+					if(instr == null)
+						instr = new Professor(na,0,0);
+					pros.put(na, instr);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				instr = pros.get("-Staff-");
+				e.printStackTrace();
+			}
+		}
 		else
-			instr = "-Staff-";
+			instr = pros.get("-Staff-");
 		location = getBet(line, "ion\">", "</div>");
 		day = getBet(line, "day\">", "</span>");
 		String temp = line.substring(line.indexOf("</span>") + 5);
@@ -83,7 +107,15 @@ public class CourseManager {
 		HttpGet request = new HttpGet(url);
 		HttpResponse response = client.execute(request);
 		//int code = response.getStatusLine().getStatusCode();
-		BufferedReader re = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+		if(entity != null)
+			try {
+				EntityUtils.consume(entity);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		entity = response.getEntity();
+		BufferedReader re = new BufferedReader(new InputStreamReader(entity.getContent()));
 		String line = "";
 		LinkedList<String> data = new LinkedList<>();
 		String cur = "";

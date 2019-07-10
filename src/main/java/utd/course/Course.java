@@ -1,4 +1,5 @@
 package utd.course;
+import rate.my.professor.*;
 
 public class Course {
 	private String status;
@@ -7,10 +8,10 @@ public class Course {
 	private String name;
 	private String day;
 	private String time;
-	private String instructor;
+	private Professor instructor;
 	private String term;
 	
-	public Course(String s, String l, String n, String n2, String d, String t, String i, String te)
+	public Course(String s, String l, String n, String n2, String d, String t, Professor i, String te)
 	{
 		status = s;
 		location = l;
