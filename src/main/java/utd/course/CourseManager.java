@@ -23,7 +23,6 @@ public class CourseManager {
 	private static CourseManager instance;
 	
 	private HttpClient client;
-	private ArrayList<Course> courses;
 	private HashMap<String, Professor> pros;
 	private Professor_Rating rate;
 	private HttpEntity entity;
@@ -36,17 +35,10 @@ public class CourseManager {
 	private CourseManager()
 	{
 		client = HttpClientBuilder.create().build();
-		courses = new ArrayList<>();
 		rate = new Professor_Rating(client);
 		pros = new HashMap<>();
 		pros.put("-Staff-", new Professor("-Staff-",0,0));
 	}
-	
-	public void addCourse(Course c)
-	{
-		courses.add(c);
-	}
-	
 	
 	public Course parse(String line)
 	{
@@ -87,7 +79,10 @@ public class CourseManager {
 		}
 		else
 			instr = pros.get("-Staff-");
-		location = getBet(line, "ion\">", "</div>");
+		if(line.indexOf("location") != -1)
+			location = getBet(line, "ion\">", "</div>");
+		else
+			location = "Online";
 //		System.out.println(line);
 //		System.out.println("location is " + location);
 		day = getBet(line, "day\">", "</span>");
@@ -100,6 +95,7 @@ public class CourseManager {
 	{
 		String url = "https://coursebook.utdallas.edu/" + course + "/term_" + term +"?";
 		LinkedList<String> s = request(url, term);
+		System.out.println("search found " + s.size());
 		TreeSet<Course> c = new TreeSet<>();
 		for(String i: s)
 		{
@@ -127,12 +123,9 @@ public class CourseManager {
 					return line.substring(index, line.indexOf("end"));
 				}
 				line = re.readLine();
+				
 			}
 		}
-//		else
-//		{
-//			System.out.println("buffered reader is null");
-//		}
 		return "";
 	}
 	public LinkedList<String> request(String url, String term) throws IOException
@@ -154,23 +147,43 @@ public class CourseManager {
 		boolean tbody = false;
 		while(line != null)
 		{
+			if(line.indexOf("</tbody>") != -1)
+				break;
 			if(tbody)
 			{
-				if(line.indexOf("location") == -1)
+				if(line.indexOf("<td>"+term.toUpperCase()+ "<br>") != -1)
 				{
+					line = line.substring(line.indexOf("<td>"+term.toUpperCase()+ "<br>") + 4);
+					if(cur.length() == 0)
+					{
+						cur += line;
+					}
+					else
+					{
+						data.add(cur);
+						cur = line;
+					}
+				}
+				else {
 					cur += line;
 				}
-				else
-				{
-					cur += line;
-					data.add(cur.substring(cur.indexOf(term)));
-					cur = "";
-				}
-				tbody = line.indexOf("tbody") == -1;
 			}
-			else
-				tbody = line.indexOf("tbody") != -1;
 			line = re.readLine();
+			if(!tbody && line.indexOf("<tbody>")!= -1)
+			{
+				tbody = true;
+				line = re.readLine();
+			}
+		}
+		int i = cur.indexOf("<td>"+term.toUpperCase()+ "<br>");
+		if(i != -1)
+		{
+			data.add(cur.substring(0, i));
+			data.add(cur.substring(i+4));
+		}
+		else
+		{
+			data.add(cur);
 		}
 		return data;
 	}
@@ -188,7 +201,7 @@ public class CourseManager {
 	public static void main(String[] args) throws ClientProtocolException, IOException
 	{
 		CourseManager m = new CourseManager();
-		TreeSet<Course> courses = m.searchCourses("ecs3390", "19u");
+		TreeSet<Course> courses = m.searchCourses("cs3377", "19f");
 			String text = "Results:\n";
 			text+="///////////////////////////////////////////////////////////////////////////////////////////////////////////////\n";
 			for(Course c: courses)

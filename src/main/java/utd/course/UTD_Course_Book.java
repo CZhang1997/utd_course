@@ -17,11 +17,11 @@ import org.apache.http.client.ClientProtocolException;
 public class UTD_Course_Book extends JFrame implements ActionListener, MouseListener{
 
 	// window dimensions
-		private static final int FRAME_WIDTH       = 2100; // adjust to have a wider/slimmer window
-	 	private static final int FRAME_HEIGHT      = 1200; // adjust to have a taller/shorter window
+		private static int FRAME_WIDTH       = 1800; // adjust to have a wider/slimmer window
+	 	private static int FRAME_HEIGHT      = 1000; // adjust to have a taller/shorter window
 	 	private static final int FRAME_X_ORIGIN    = 100;
 	 	private static final int FRAME_Y_ORIGIN    = 100;
-	 	private static final int FONT_SIZE    = 25;
+	 	private static int FONT_SIZE    = 25;
 	 	private CourseManager manager;
 		// declare GUI elements
 		private JLabel search;
@@ -31,16 +31,18 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 		private JMenuItem save, load, quit, help;
 		private JScrollPane scroller;
 		private String announcement;
-		public UTD_Course_Book()
+		public UTD_Course_Book(int size)
 		{
 			manager = CourseManager.getInstance();
 			// set up the window
+			display = new JTextArea();
+			reSize(size);
 			setTitle("UTD Course Book");
-	 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
+	 		
 	 		setResizable(true);
 	 		setLocation(FRAME_X_ORIGIN, FRAME_Y_ORIGIN);
 	 	// set up the main display area and make it scrollable
-	 		display = new JTextArea();
+	 		
 	 		display.setFont(new Font("Arial",Font.BOLD,FONT_SIZE + 5));
 	 		display.setEditable(false);
 //	 		display.setBorder(BorderFactory.createLineBorder(Color.blue));
@@ -74,17 +76,21 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 			setJMenuBar(menuBar);	
 			save = new JMenuItem("Info");
 			quit = new JMenuItem("Quit");
+			load = new JMenuItem("Resize");
 			help = new JMenuItem("Help");	
 			save.addActionListener(this);
 			help.addActionListener(this);
-			
+			load.addActionListener(this);
 			quit.addActionListener(this);
 			menu = new JMenu("menu");
 			menu.setFont(new Font("Arial",Font.BOLD,FONT_SIZE));
 			menu.add(save);
+			menu.add(load);
 			menu.add(help);
-			menu.add(quit);	
+			menu.add(quit);
 			menuBar.add(menu);
+			JLabel temp = new JLabel("       ");
+			menuBar.add(temp);
 			search = new JLabel("Search");
 			search.setFont(new Font("Arial",Font.BOLD,FONT_SIZE));
 			search.addMouseListener(this);
@@ -104,6 +110,16 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 			setDefaultCloseOperation(EXIT_ON_CLOSE);
 			setVisible(true); // make it visible LAST
 	 		
+		}
+		
+		public void reSize(int size)
+		{
+			double d = size /100.0;
+			FRAME_WIDTH = (int)(FRAME_WIDTH * d);
+			FRAME_HEIGHT = (int)(FRAME_HEIGHT * d);
+			FONT_SIZE = (int)(FONT_SIZE * d);
+			display.setFont(new Font("Arial",Font.BOLD,FONT_SIZE + 5));
+			setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		}
 		/**
 		 * required by the MouseListener interface.  Invoked when the mouse is clicked.
@@ -179,7 +195,7 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 						for(Course c: courses)
 						{
 							text+= c;
-							text+="\n///////////////////////////////////////////////////////////////////////////////////////////////////////////////\n";
+							text+="\n///////////////////////////////////////////////////////////////////////////////////////////////////////////////\n\n";
 						}
 						display.setText(text);
 					}
@@ -208,7 +224,6 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 		public void actionPerformed(ActionEvent e)
 		{
 			String menuName = e.getActionCommand();
-			System.out.println(menuName);
 			if (menuName.equals("Quit"))
 				System.exit(0);
 			else if (menuName.equals("Info"))
@@ -224,6 +239,21 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 				JLabel l = new JLabel(text);
 				l.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
 				JOptionPane.showMessageDialog(null,l);
+			}
+			else if(menuName.equals("Resize"))
+			{	
+				String text = "enter 1 - 200 for the size";
+				JLabel l = new JLabel(text);
+				l.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
+				String ret = JOptionPane.showInputDialog(l);
+				try {
+					int si = Integer.parseInt(ret);
+					reSize(si);
+				}
+				catch (Exception e23)
+				{
+					System.out.println(e23.fillInStackTrace());
+				}
 			}
 		}
 		

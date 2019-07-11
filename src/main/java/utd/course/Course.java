@@ -30,13 +30,20 @@ public class Course implements Comparable{
 	{
 		return number + "\t" + status + "\t" + term + "\n" + name  + "\n" + instructor  + "\n" + day  + "\t" + time  + "\t" + location;
 	}
-
+	public String getNumber()
+	{
+		return number;
+	}
 	@Override
 	public int compareTo(Object o) {
 		Course a = (Course)o;
 		int dif = (int)(instructor.getScore() * 10 - a.getProf().getScore() * 10);
 		if(dif == 0)
-			return -1;
+		{
+			dif =  number.compareTo(a.getNumber());
+			if(dif == 0)
+				return -1;
+		}
 		return dif;
 	}
 	
