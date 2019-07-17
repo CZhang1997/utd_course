@@ -17,8 +17,8 @@ import org.apache.http.client.ClientProtocolException;
 public class UTD_Course_Book extends JFrame implements ActionListener, MouseListener{
 
 	// window dimensions
-		private static int FRAME_WIDTH       = 1800; // adjust to have a wider/slimmer window
-	 	private static int FRAME_HEIGHT      = 1000; // adjust to have a taller/shorter window
+		private static int FRAME_WIDTH       = 1200; // adjust to have a wider/slimmer window
+	 	private static int FRAME_HEIGHT      = 700; // adjust to have a taller/shorter window
 	 	private static final int FRAME_X_ORIGIN    = 100;
 	 	private static final int FRAME_Y_ORIGIN    = 100;
 	 	private static int FONT_SIZE    = 25;
