@@ -50,10 +50,10 @@ public class CourseManager {
 		String time;
 		Professor instr;
 		String t = line.substring(0, 3);
-		if(line.indexOf("Closed") != -1)
-			status = "Closed";
-		else
+		if(line.indexOf("Open") != -1)
 			status = "Open";
+		else
+			status = "Closed";
 		line = line.substring(line.indexOf("</span>"));
 		number = getBet(line, "ble\">", "</a>");
 		line = line.substring(line.indexOf("</a>")).substring(line.indexOf("</td>"));
