@@ -62,10 +62,12 @@ public class CourseManager {
 		if(line.indexOf("-Staff-") == -1)
 		{
 			String na = getBet(line, "title=\"", "\">").trim();
+			//System.out.println(na);
 			try {
 				instr = pros.get(na);
 				if(instr == null)
 				{
+					//instr = new Professor(na);
 					instr = rate.get(na);
 					if(instr == null)
 						instr = new Professor(na,0,0);
@@ -95,10 +97,12 @@ public class CourseManager {
 	{
 		String url = "https://coursebook.utdallas.edu/" + course + "/term_" + term +"?";
 		LinkedList<String> s = request(url, term);
-		System.out.println("search found " + s.size());
+		System.out.println("search found " + s.size() + " course, checking rate my professor");
+		
 		TreeSet<Course> c = new TreeSet<>();
 		for(String i: s)
 		{
+			//System.out.println();
 			c.add(parse(i));
 		}
 		
@@ -145,6 +149,7 @@ public class CourseManager {
 		LinkedList<String> data = new LinkedList<>();
 		String cur = "";
 		boolean tbody = false;
+		System.out.println(re);
 		while(line != null)
 		{
 			if(line.indexOf("</tbody>") != -1)
@@ -201,7 +206,7 @@ public class CourseManager {
 	public static void main(String[] args) throws ClientProtocolException, IOException
 	{
 		CourseManager m = new CourseManager();
-		TreeSet<Course> courses = m.searchCourses("cs3377", "19f");
+		TreeSet<Course> courses = m.searchCourses("cs6375", "20f");
 			String text = "Results:\n";
 			text+="///////////////////////////////////////////////////////////////////////////////////////////////////////////////\n";
 			for(Course c: courses)

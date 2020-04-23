@@ -31,6 +31,9 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 		private JMenuItem save, load, quit, help;
 		private JScrollPane scroller;
 		private String announcement;
+		
+		String defaultTerm = "20f";
+		
 		public UTD_Course_Book(int size)
 		{
 			manager = CourseManager.getInstance();
@@ -177,10 +180,12 @@ public class UTD_Course_Book extends JFrame implements ActionListener, MouseList
 				JLabel ques = new JLabel("what is the course? ex: cs3345.");
 				ques.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
 				String course = JOptionPane.showInputDialog(ques);
-				ques.setText("in what term? 19f?");// = new JLabel("in what term? 19f?");
+				ques.setText("in what term? 20f?");// = new JLabel("in what term? 19f?");
 				//ques.setFont(new Font("Arial", Font.BOLD, FONT_SIZE));
 				String term = JOptionPane.showInputDialog(ques);
 				course = course.replaceAll(" ", "");
+				if(term.length() == 0)
+					term = defaultTerm;
 				if(course.length() != 0 || term.length() != 0)
 				try {
 					TreeSet<Course> courses = manager.searchCourses(course, term);

@@ -10,6 +10,12 @@ public class Professor {
 		overall = o;
 		difficulty = d;
 	}
+	public Professor(String n)
+	{
+		name = n;
+		overall = 0.0;
+		difficulty = 0.0;
+	}
 	public String getName()
 	{
 		return name;

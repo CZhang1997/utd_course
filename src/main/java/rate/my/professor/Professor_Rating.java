@@ -67,16 +67,21 @@ public class Professor_Rating {
 			String line = "";
 			while (line != null)
 			{
+				//System.out.println(line);
 				if(line.indexOf("Overall Quality") != -1)
 				{
-					line = re.readLine();
-					grade = line.substring(line.indexOf("\">") + 2, line.indexOf("</div>"));
+					//line = re.readLine();
+					//System.out.println(line);
+					int inde = line.indexOf("</div><div class=\"RatingValue__Denominator-qw8sqy-4 kLCgxI\">");
+					grade = line.substring(inde - 3, inde);
+					grade = getDigit(grade);
+					//System.out.println(grade);
 				}
 				if(line.indexOf("Level of Difficulty")!= -1)
 				{
-					re.readLine();
-					line = re.readLine();
-					hard = line.trim();
+					int inde = line.indexOf("<div class=\"FeedbackItem__FeedbackDescription-uof32n-2 hddnCs\">Level of Difficulty");
+					hard = line.substring(inde - 9, inde - 6);
+					hard = getDigit(hard);
 					break;
 				}
 				line = re.readLine();
@@ -150,11 +155,22 @@ public class Professor_Rating {
 		}
 		return "";
 	}
+	private String getDigit(String s)
+	{
+		String ret = "";
+		for(int i = 0; i < s.length(); i++)
+		{
+			if((s.charAt(i) <= '9' && s.charAt(i) >= '0') || s.charAt(i) == '.')
+				ret += s.charAt(i);
+		}
+		
+		return ret;
+	}
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		Professor_Rating rate = new Professor_Rating();
 		
-		System.out.println(rate.get("Yu Chung Ng"));
+		System.out.println(rate.get("Anjum Chida"));
 	}
 
 }

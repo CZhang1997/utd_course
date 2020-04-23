@@ -1,4 +1,4 @@
-package utd.course;
+ package utd.course;
 
 import java.awt.Font;
 import java.io.IOException;
@@ -21,7 +21,7 @@ public class App
 		JLabel l = new JLabel(text);
 		l.setFont(new Font("Arial", Font.BOLD, 25));
 		String ret = JOptionPane.showInputDialog(l);
-		try {
+		try { 
 			int si = Integer.parseInt(ret);
 	        UTD_Course_Book book = new UTD_Course_Book(si);
 		}

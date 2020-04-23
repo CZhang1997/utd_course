@@ -20,7 +20,7 @@ public class Course implements Comparable<Course>{
 		day = d;
 		time = t;
 		instructor = i;
-		term = te;
+		term = te; 
 	}
 	public Professor getProf()
 	{
